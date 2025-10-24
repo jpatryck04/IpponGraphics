@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="checkout-form" style="margin-top: 5rem;">
+        <h2>Admin Login</h2>
+        <form id="login-form">
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" required>
+            </div>
+            <button type="submit" class="btn-primary" style="width: 100%;">Login</button>
+        </form>
+        <div id="login-success" style="display: none; margin-top: 1rem; text-align: center;">
+            <p>Login successful!</p>
+            <a href="/admin" class="btn-primary">Go to Admin Panel</a>
+        </div>
+    </div>
+    <div id="notification" class="notification"></div>
+
+    <script>
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const password = document.getElementById('password').value;
+            const notification = document.getElementById('notification');
+            const loginSuccessDiv = document.getElementById('login-success');
+
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ password }),
+                });
+
+                if (response.ok) {
+                    document.getElementById('login-form').style.display = 'none';
+                    loginSuccessDiv.style.display = 'block';
+                } else {
+                    const error = await response.json();
+                    notification.textContent = error.message || 'Login failed!';
+                    notification.className = 'notification notification-error show';
+                    setTimeout(() => {
+                        notification.classList.remove('show');
+                    }, 3000);
+                }
+            } catch (err) {
+                notification.textContent = 'An error occurred. Please try again.';
+                notification.className = 'notification notification-error show';
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            }
+        });
+    </script>
+</body>
+</html>

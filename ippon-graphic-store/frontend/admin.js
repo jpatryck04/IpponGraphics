@@ -1,4 +1,5 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+
     const productForm = document.getElementById('product-form');
     const productList = document.getElementById('product-list');
     const imagePreview = document.getElementById('image-preview');
@@ -6,13 +7,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const productIdInput = document.getElementById('product-id');
     const cancelEditButton = document.getElementById('cancel-edit');
     const notification = document.getElementById('notification');
+    const formTitle = document.getElementById('form-title');
+
+
+    // Añadir botón de logout
+    const logoutButton = document.createElement('a');
+    logoutButton.textContent = 'Logout';
+    logoutButton.href = '#';
+    logoutButton.style.padding = '0.5rem 1rem';
+    logoutButton.addEventListener('click', async (e) => {
+        e.preventDefault();
+        await fetch('/api/logout', { method: 'POST' });
+        window.location.href = '/login.html';
+    });
+    document.querySelector('.nav-links').appendChild(logoutButton);
+
 
     const API_URL = '/api/products';
 
     // Show notification
-    const showNotification = (message) => {
+    const showNotification = (message, isError = false) => {
         notification.textContent = message;
-        notification.classList.add('show');
+        notification.className = `notification ${isError ? 'notification-error' : 'notification-success'} show`;
         setTimeout(() => {
             notification.classList.remove('show');
         }, 3000);
@@ -22,30 +38,33 @@ document.addEventListener('DOMContentLoaded', () => {
     const fetchProducts = async () => {
         try {
             const response = await fetch(API_URL);
+            if(response.status === 401) {
+                window.location.href = '/login.html';
+                return;
+            }
             const products = await response.json();
             productList.innerHTML = '';
             if (products.length === 0) {
-                productList.innerHTML = '<p>No products found. Add one using the form above.</p>';
+                productList.innerHTML = '<p class="no-products">No products found. Add one using the form above.</p>';
                 return;
             }
             products.forEach(product => {
                 const productCard = document.createElement('div');
-                productCard.className = 'card';
+                productCard.className = 'producto';
                 productCard.innerHTML = `
-                    <img src="${product.image}" alt="${product.name}">
-                    <div class="card-content">
-                        <h3>${product.name}</h3>
-                        <p>${product.description}</p>
-                        <p class="price">$${product.price}</p>
-                        <button onclick="editProduct('${product.id}')">Edit</button>
-                        <button onclick="deleteProduct('${product.id}')">Delete</button>
-                    </div>
+                    <img src="${product.image || 'https://via.placeholder.com/300'}" alt="${product.name}">
+                    <h3>${product.name}</h3>
+                    <p class="product-category">${product.category}</p>
+                    <p class="product-description">${product.description}</p>
+                    <p class="product-price">$${product.price}</p>
+                    <button onclick="editProduct('${product.id}')" class="btn-primary">Edit</button>
+                    <button onclick="deleteProduct('${product.id}')" class="btn-secondary" style="margin-top: 0.5rem;">Delete</button>
                 `;
                 productList.appendChild(productCard);
             });
         } catch (error) {
             console.error('Error fetching products:', error);
-            showNotification('Error fetching products.');
+            showNotification('Error fetching products.', true);
         }
     };
 
@@ -88,15 +107,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 productForm.reset();
                 imagePreview.style.display = 'none';
                 productIdInput.value = '';
+                formTitle.textContent = 'Añadir Nuevo Producto';
                 cancelEditButton.style.display = 'none';
                 fetchProducts();
             } else {
+                 if(response.status === 401) {
+                    window.location.href = '/login.html';
+                    return;
+                }
                 const errorData = await response.json();
-                showNotification(`Error: ${errorData.message}`);
+                showNotification(`Error: ${errorData.message}`, true);
             }
         } catch (error) {
             console.error('Error saving product:', error);
-            showNotification('Error saving product.');
+            showNotification('Error saving product.', true);
         }
     });
 
@@ -105,6 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
         productForm.reset();
         imagePreview.style.display = 'none';
         productIdInput.value = '';
+        formTitle.textContent = 'Añadir Nuevo Producto';
         cancelEditButton.style.display = 'none';
     });
 
@@ -112,6 +137,10 @@ document.addEventListener('DOMContentLoaded', () => {
     window.editProduct = async (id) => {
         try {
             const response = await fetch(`${API_URL}/${id}`);
+            if(response.status === 401) {
+                window.location.href = '/login.html';
+                return;
+            }
             const product = await response.json();
             productIdInput.value = product.id;
             document.getElementById('name').value = product.name;
@@ -119,13 +148,18 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('price').value = product.price;
             document.getElementById('category').value = product.category;
             document.getElementById('tags').value = product.tags.join(', ');
-            imagePreview.src = product.image;
-            imagePreview.style.display = 'block';
-            cancelEditButton.style.display = 'inline-block';
+            if (product.image) {
+                imagePreview.src = product.image;
+                imagePreview.style.display = 'block';
+            } else {
+                imagePreview.style.display = 'none';
+            }
+            formTitle.textContent = `Editando: ${product.name}`;
+            cancelEditButton.style.display = 'block';
             window.scrollTo(0, 0);
         } catch (error) {
             console.error('Error fetching product for editing:', error);
-            showNotification('Error fetching product for editing.');
+            showNotification('Error fetching product for editing.', true);
         }
     };
 
@@ -140,12 +174,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     showNotification('Product deleted successfully.');
                     fetchProducts();
                 } else {
+                     if(response.status === 401) {
+                        window.location.href = '/login.html';
+                        return;
+                    }
                     const errorData = await response.json();
-                    showNotification(`Error: ${errorData.message}`);
+                    showNotification(`Error: ${errorData.message}`, true);
                 }
             } catch (error) {
                 console.error('Error deleting product:', error);
-                showNotification('Error deleting product.');
+                showNotification('Error deleting product.', true);
             }
         }
     };

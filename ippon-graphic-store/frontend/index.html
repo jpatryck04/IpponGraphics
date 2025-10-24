@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,19 +7,55 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <h1>IPPON Graphic Store</h1>
-        <a href="/admin">Admin Panel</a>
+    <nav class="navbar">
+        <img src="img/logo.png" alt="IPPON Logo" class="logo">
+        <ul class="nav-links">
+            <li><a href="#productos">Productos</a></li>
+            <li><a href="#info">Sobre Nosotros</a></li>
+            <li><a href="/admin">Admin</a></li>
+        </ul>
+    </nav>
+
+    <header class="hero">
+        <div class="overlay"></div>
+        <div class="hero-content">
+            <h1>Tu Visión, <span class="highlight">Nuestro Diseño</span></h1>
+            <p>Descubre diseños gráficos de alta calidad para potenciar tu marca.</p>
+            <a href="#productos" class="btn-primary">Ver Catálogo</a>
+        </div>
     </header>
-    <main class="container">
-        <section id="product-grid" class="grid-container"></section>
+
+    <main>
+        <section id="productos" class="productos">
+            <h2>Nuestros Productos</h2>
+            <div id="product-grid" class="grid-productos">
+                <!-- Los productos se cargarán aquí -->
+            </div>
+        </section>
+
+        <section id="info" class="info">
+            <h2>Sobre IPPON</h2>
+            <p>En IPPON Graphic Store, nos dedicamos a crear diseños impactantes que capturan la esencia de tu marca. Desde logos hasta banners, nuestro equipo de expertos está aquí para ayudarte a destacar.</p>
+        </section>
     </main>
-    <div id="product-modal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <div id="modal-body"></div>
+
+    <div id="product-modal" class="cart-modal">
+        <div class="cart-modal-content">
+             <div class="cart-modal-header">
+                <h2 id="modal-product-name">Detalles del Producto</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div id="modal-body" class="cart-modal-body">
+                <!-- El contenido del modal se cargará aquí -->
+            </div>
         </div>
     </div>
+
+    <footer>
+        <p>&copy; 2024 IPPON Graphic Store. Todos los derechos reservados.</p>
+        <p>Diseñado por <a href="#">Tu Nombre o Empresa</a></p>
+    </footer>
+
     <script src="script.js"></script>
 </body>
 </html>
