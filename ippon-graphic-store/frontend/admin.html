@@ -1,36 +1,41 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IPPON Graphic Store - Admin</title>
+    <title>Panel de Administración - IPPON</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <h1>Admin Panel</h1>
-        <a href="/">Go to Store</a>
-    </header>
-    <main>
-        <section id="product-form-section">
-            <h2>Add/Edit Product</h2>
+    <nav class="navbar">
+        <img src="img/logo.png" alt="IPPON Logo" class="logo">
+        <ul class="nav-links">
+            <li><a href="/">Volver a la Tienda</a></li>
+        </ul>
+    </nav>
+
+    <main class="productos" style="padding-top: 2rem;">
+        <h2 style="margin-bottom: 2rem;">Panel de Administración</h2>
+
+        <section class="checkout-form" style="max-width: 900px; margin-bottom: 3rem;">
+            <h3 id="form-title" style="margin-top: 0;">Añadir Nuevo Producto</h3>
             <form id="product-form">
                 <input type="hidden" id="product-id">
                 <div class="form-group">
-                    <label for="name">Name</label>
+                    <label for="name">Nombre del Producto</label>
                     <input type="text" id="name" required>
                 </div>
                 <div class="form-group">
-                    <label for="description">Description</label>
-                    <textarea id="description"></textarea>
+                    <label for="description">Descripción</label>
+                    <textarea id="description" rows="4" style="width: 100%; padding: 1rem; border: 1px solid #444; border-radius: 8px; background: #2a2a2a; color: #fff; font-size: 1rem;"></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="price">Price</label>
+                    <label for="price">Precio</label>
                     <input type="number" id="price" min="0" step="0.01" required>
                 </div>
                 <div class="form-group">
-                    <label for="category">Category</label>
-                    <select id="category">
+                    <label for="category">Categoría</label>
+                    <select id="category" style="width: 100%; padding: 1rem; border: 1px solid #444; border-radius: 8px; background: #2a2a2a; color: #fff; font-size: 1rem;">
                         <option value="logos">Logos</option>
                         <option value="banners">Banners</option>
                         <option value="flyers">Flyers</option>
@@ -39,24 +44,33 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="tags">Tags (comma-separated)</label>
+                    <label for="tags">Tags (separados por comas)</label>
                     <input type="text" id="tags">
                 </div>
                 <div class="form-group">
-                    <label for="image">Image</label>
+                    <label for="image">Imagen</label>
                     <input type="file" id="image" accept="image/*">
-                    <img id="image-preview" src="" alt="Image Preview" style="display: none; max-width: 200px; margin-top: 10px;">
+                    <img id="image-preview" src="" alt="Previsualización de imagen" style="display: none; max-width: 200px; margin-top: 15px; border-radius: 8px;">
                 </div>
-                <button type="submit">Save Product</button>
-                <button type="button" id="cancel-edit" style="display: none;">Cancel Edit</button>
+                <button type="submit" class="btn-primary" style="width: 100%;">Guardar Producto</button>
+                <button type="button" id="cancel-edit" class="btn-secondary" style="width: 100%; margin-top: 1rem; display: none;">Cancelar Edición</button>
             </form>
         </section>
+
         <section id="product-list-section">
-            <h2>Product List</h2>
-            <div id="product-list" class="grid-container"></div>
+            <h2>Lista de Productos</h2>
+            <div id="product-list" class="grid-productos">
+                <!-- Los productos se cargarán aquí -->
+            </div>
         </section>
     </main>
+
     <div id="notification" class="notification"></div>
+
+    <footer>
+        <p>&copy; 2024 IPPON Graphic Store. Todos los derechos reservados.</p>
+    </footer>
+
     <script src="admin.js"></script>
 </body>
 </html>
